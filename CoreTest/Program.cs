@@ -29,7 +29,7 @@ namespace FileMover
                 string fromDir = config["FileSettings:DirectoryFrom"];
                 string toDir = config["FileSettings:DirectoryTo"];
 
-                if(fromDir == null || toDir == null)
+                if (fromDir == null || toDir == null)
                 {
                     logger.Info("路徑設定沒設");
                     return;
@@ -48,11 +48,12 @@ namespace FileMover
                     logger.Info("目標路徑不存在");
                     Directory.CreateDirectory(toDir);
                 }
-             
-                try
+
+
+                var files = Directory.GetFiles(fromDir);
+                foreach (var file in files)
                 {
-                    var files = Directory.GetFiles(fromDir);
-                    foreach (var file in files)
+                    try
                     {
                         string fileName = Path.GetFileName(file);
                         string destFile = Path.Combine(toDir, fileName);
@@ -64,14 +65,16 @@ namespace FileMover
                         Console.WriteLine($"檔案刪除成功: {fileName}");
                         logger.Info($"檔案刪除成功: {fileName}");
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"檔案搬移錯誤: {ex.Message}");
+                        logger.Error($"檔案搬移錯誤: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"檔案搬移錯誤: {ex.Message}");
-                    logger.Error($"檔案搬移錯誤: {ex.Message}");
-                }
+
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 Console.WriteLine($"錯誤: {ex.Message}");
                 logger.Error($"錯誤: {ex.Message}");
             }
